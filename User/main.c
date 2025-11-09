@@ -9,6 +9,8 @@
 #include "Serial.h"
 #include "AD.h"
 #include "Sensor.h"
+#include "RotateEncoder.h"
+
 
 float kp=1.0,ki=1.0,kd=1.0;
 int16_t DirectSpeed=250,MSmallTurnSpeed=180,MLargeTurnSpeed=120;//制动速度
@@ -24,6 +26,7 @@ int main()
 	LED_Init();
 	AD_Init();
 	Encoder_Init();
+	RotateEncoder_Init();
 	Timer_Init();//一般定时器在最后初始化
 	uint8_t Menu_Indxe=0;
 	float AD_Value=0;//获得初始AD值
@@ -64,9 +67,9 @@ int main()
 					AD_PIDDebug=(AD_Value/4095)*3.0;
 					AD_PIDDebugChange=AD_PIDDebug-AD_PIDDebugChange;
 					if(count<100)AD_PIDDebugChange=0;
-					if(Menu_Indxe==1)kp+=AD_PIDDebugChange;
-					if(Menu_Indxe==2)ki+=AD_PIDDebugChange;
-					if(Menu_Indxe==3)kd+=AD_PIDDebugChange;
+					if(Menu_Indxe==1)kp+=RotateEncoder_Get();
+					if(Menu_Indxe==2)ki+=RotateEncoder_Get();
+					if(Menu_Indxe==3)kd+=RotateEncoder_Get();
 					OLED_Printf(0,20,OLED_6X8,"kp=%.2f  ki=%.2f",kp,ki);
 					OLED_Printf(0,30,OLED_6X8,"kd=%.2f",kd);
 					OLED_Update();
@@ -92,10 +95,10 @@ int main()
 					AD_SpeedDebugChange=AD_SpeedDebug-AD_SpeedDebugChange;
 					if(count<100)AD_SpeedDebugChange=0;
 					if(Menu_Indxe==4)DirectSpeed+=AD_SpeedDebugChange;
-					if(Menu_Indxe==5)MSmallTurnSpeed+=AD_SpeedDebugChange;
-					if(Menu_Indxe==6)MLargeTurnSpeed+=AD_SpeedDebugChange;
-					if(Menu_Indxe==7)SmallTuenSpeed+=AD_SpeedDebugChange;
-					if(Menu_Indxe==8)LargeTunrSpeed+=AD_SpeedDebugChange;
+					if(Menu_Indxe==5)MSmallTurnSpeed+=RotateEncoder_Get();
+					if(Menu_Indxe==6)MLargeTurnSpeed+=RotateEncoder_Get();
+					if(Menu_Indxe==7)SmallTuenSpeed+=RotateEncoder_Get();
+					if(Menu_Indxe==8)LargeTunrSpeed+=RotateEncoder_Get();
 					OLED_Printf(60,30,OLED_6X8,"DiS=%d",DirectSpeed);
 					OLED_Printf(0,40,OLED_6X8,"MSTS=%d  MLTS=%d",MSmallTurnSpeed,MLargeTurnSpeed);
 					OLED_Printf(0,50,OLED_6X8,"STS=%04d  LTS=%d",SmallTuenSpeed,LargeTunrSpeed);

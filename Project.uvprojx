@@ -775,6 +775,16 @@
               <FileType>5</FileType>
               <FilePath>.\Hardware\AD.h</FilePath>
             </File>
+            <File>
+              <FileName>RotateEncoder.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\Hardware\RotateEncoder.c</FilePath>
+            </File>
+            <File>
+              <FileName>RotateEncoder.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>.\Hardware\RotateEncoder.h</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>
