@@ -41,12 +41,37 @@ void AD_Init(void)
 }
 
 //获取转换结果
-uint16_t AD_GetValue(void)
+#define MEDIAN_SIZE 5
+
+uint16_t AD_GetValue_Median(void)
 {
-	ADC_SoftwareStartConvCmd(ADC1,ENABLE);//软件触发转换的函数(如果是连续转换模式这个函数可以放在Init里，也不需要判断转换是否完成)
-	
-	while(ADC_GetFlagStatus(ADC1,ADC_FLAG_EOC)==RESET);//获取标志位状态判断转换是否完成
-	
-	return ADC_GetConversionValue(ADC1);//获取转换结果,这个函数可以自动清除标志位
+    uint16_t samples[MEDIAN_SIZE];
+    
+    // 采集多个样本
+    for(uint8_t i = 0; i < MEDIAN_SIZE; i++)
+    {
+        ADC_SoftwareStartConvCmd(ADC1, ENABLE);
+        while(ADC_GetFlagStatus(ADC1, ADC_FLAG_EOC) == RESET);
+        samples[i] = ADC_GetConversionValue(ADC1);
+        
+        for(volatile uint32_t j = 0; j < 50; j++);
+    }
+    
+    // 冒泡排序
+    for(uint8_t i = 0; i < MEDIAN_SIZE - 1; i++)
+    {
+        for(uint8_t j = 0; j < MEDIAN_SIZE - i - 1; j++)
+        {
+            if(samples[j] > samples[j + 1])
+            {
+                uint16_t temp = samples[j];
+                samples[j] = samples[j + 1];
+                samples[j + 1] = temp;
+            }
+        }
+    }
+    
+    // 返回中值
+    return samples[MEDIAN_SIZE / 2];
 }
 
