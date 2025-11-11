@@ -33,8 +33,16 @@ int main()
 	{
 		KeyNum=Key_GetNum();
 		if(KeyNum==1)State=!State;
-		if(State==0)OLED_Printf(0,0,OLED_8X16,"Debug");
-		if(State==1)OLED_Printf(0,0,OLED_8X16,"RUN    ");
+		if(State==0)OLED_Printf(0,0,OLED_8X16,"Debug                         ");
+		if(State==1)OLED_Printf(0,0,OLED_8X16,"RUN                           ");
+		/********************************************* 
+		 * 
+		 * 
+		 * 简易菜单
+		 * 
+		 * 
+		 * 
+		*********************************************/
 		OLED_Printf(0,20,OLED_6X8,"kp=%.2f  ki=%.2f",kp,ki);
 		OLED_Printf(0,30,OLED_6X8,"kd=%.2f",kd);
 		OLED_Printf(60,30,OLED_6X8,"DiS=%04d",DirectSpeed);
