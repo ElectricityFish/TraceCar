@@ -33,30 +33,46 @@ void Sensor_Init(void)
 }
 
 
-//循迹逻辑
-uint8_t  Trace_GetState(void)
+//循迹逻辑，黑线返回值为0
+uint8_t Trace_GetState(void)
 {
-    //等待
-    if(Sensor_Left2==0&&Sensor_Right2==0&&Sensor_Left1==0&&Sensor_Right1==0)return Static;
-    //直行
-    if((Sensor_Left2==1&&Sensor_Right2==1)&&((Sensor_Left1==1&&Sensor_Right1==1)||(Sensor_Left1==0&&Sensor_Right1==0)))return Direct;
-    //偏移校准
-    if((Sensor_Left1==0&&Sensor_Right2==1)&&(Sensor_Left1==0&&Sensor_Right1==0))return LeftExcursion_Silght;
-    if((Sensor_Left1==0&&Sensor_Right2==0)&&(Sensor_Left1==0&&Sensor_Right1==1))return LeftExcursion_Large;
-
-    if((Sensor_Left1==0&&Sensor_Right2==1)&&(Sensor_Left1==0&&Sensor_Right1==0))return RightExcursion_Silght;
-    if((Sensor_Left1==0&&Sensor_Right2==0)&&(Sensor_Left1==0&&Sensor_Right1==1))return RightExcursion_Large;
-    //转向
-    if((Sensor_Left2==1&&Sensor_Left1==1)&&(Sensor_Right2==0&&Sensor_Right1==0))return LeftTurn_Arched;
-    if((Sensor_Left2==1&&Sensor_Left1==1)&&(Sensor_Right2==1&&Sensor_Right1==0))return LeftTurn_Vertical;
-
-    if((Sensor_Left2==0&&Sensor_Left1==0)&&(Sensor_Right2==1&&Sensor_Right1==1))return RightTurn_Arched;
-    if((Sensor_Left2==1&&Sensor_Left1==0)&&(Sensor_Right2==1&&Sensor_Right1==1))return RightTurn_Vertical;
-
-
-    //其它情况待定
+    uint8_t L1 = Sensor_Left1;
+    uint8_t L2 = Sensor_Left2;
+    uint8_t R2 = Sensor_Right2; 
+    uint8_t R1 = Sensor_Right1;
+    // 等待 - 所有传感器都在白色区域（都不在黑线上）
+    if(L1 == 1 && L2 == 1 && R2 == 1 && R1 == 1) return Static;
+    
+    // 直行 - 中间两个传感器(L2,R2)在黑线上，两边(L1,R1)在白线上
+    if(L2 == 0 && R2 == 0 && L1 == 1 && R1 == 1) return Direct;
+    
+    // 左轻微偏移 - 只有R2在黑线上，L2在白线上
+    if(L2 == 1 && R2 == 0 && L1 == 1 && R1 == 1) return LeftExcursion_Silght;
+    
+    // 左大偏移 - R2和R1都在黑线上（小车偏左较多）
+    if(L2 == 1 && R2 == 0 && R1 == 0) return LeftExcursion_Large;
+    
+    // 右轻微偏移 - 只有L2在黑线上，R2在白线上  
+    if(L2 == 0 && R2 == 1 && L1 == 1 && R1 == 1) return RightExcursion_Silght;
+    
+    // 右大偏移 - L2和L1都在黑线上（小车偏右较多）
+    if(L2 == 0 && L1 == 0 && R2 == 1) return RightExcursion_Large;
+    
+    // 左转弯 - 左侧传感器都检测到黑线
+    if(L1 == 0 && L2 == 0 && R2 == 1 && R1 == 1) return LeftTurn_Arched;
+    if(L1 == 0 && L2 == 0 && R2 == 0 && R1 == 1) return LeftTurn_Vertical;
+    
+    // 右转弯 - 右侧传感器都检测到黑线
+    if(L1 == 1 && L2 == 1 && R2 == 0 && R1 == 0) return RightTurn_Arched;
+    if(L1 == 1 && L2 == 0 && R2 == 0 && R1 == 0) return RightTurn_Vertical;
+    
+    // 十字路口等特殊情况
+    if(L1 == 0 && L2 == 0 && R2 == 0 && R1 == 0) {
+        // 所有传感器都在黑线上，可能是十字路口
+        return Direct; // 或者定义一个新的十字路口状态
+    }
+    
     return Static;
-
 }
 
 
