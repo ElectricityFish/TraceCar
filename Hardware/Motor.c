@@ -25,14 +25,14 @@ void Motor_SetPWM_Left1(int8_t Speed)
 {
 	if (Speed >= 0)
 	{
-		GPIO_SetBits(GPIOA,GPIO_Pin_13);
-		GPIO_ResetBits(GPIOA,GPIO_Pin_14);
+		GPIO_SetBits(GPIOA,GPIO_Pin_11);
+		GPIO_ResetBits(GPIOA,GPIO_Pin_12);
 		PWM_SetCompare_Left1(Speed);
 	}
 	else
 	{
-		GPIO_ResetBits(GPIOA,GPIO_Pin_13);
-		GPIO_SetBits(GPIOA,GPIO_Pin_14);
+		GPIO_ResetBits(GPIOA,GPIO_Pin_11);
+		GPIO_SetBits(GPIOA,GPIO_Pin_12);
 		PWM_SetCompare_Left1(-Speed);
 	}
 }
