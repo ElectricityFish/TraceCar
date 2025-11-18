@@ -5,15 +5,19 @@
 #include "Timer.h"
 #include "Key.h"
 #include "Motor.h"
-#include "Encoder.h"
 #include "Serial.h"
 #include "Sensor.h"
 #include "RotateEncoder.h"
 
-float kp=1.0,ki=1.0,kd=1.0;
-int16_t DirectSpeed=250,MSmallTurnSpeed=180,MLargeTurnSpeed=120;//制动速度
-int16_t SmallTuenSpeed=80,LargeTunrSpeed=-50;//转向速度
+
+int8_t DirectOut=100;
+int8_t LeftExcursion_Silght_Out,LeftExcursion_Large_Out;
+int8_t RightExcursion_Silght_Out,RightExcursion_Large_Out;
+int8_t LeftTurn_Arched_Out,LeftTurn_Vertical_Out;
+int8_t RightTurn_Arched_Out,RightTurn_Vertical_Out;
 uint8_t KeyNum,State;
+uint8_t CarState;
+
 
 int main()
 {
@@ -22,12 +26,16 @@ int main()
 	Motor_Init();
 	Sensor_Init();
 	LED_Init();
-	Encoder_Init();
 	RotateEncoder_Init();
 	Timer_Init();//一般定时器在最后初始化
 	uint8_t Menu_Indxe=0;
 	
 
+
+	//Motor_SetPWM_Left1(100);
+	//Motor_SetPWM_Left2(100);
+	//Motor_SetPWM_Right1(100);
+	//Motor_SetPWM_Right2(100);
 
 	while(1)
 	{
@@ -43,53 +51,44 @@ int main()
 		 * 
 		 * 
 		*********************************************/
-		OLED_Printf(0,20,OLED_6X8,"kp=%.2f  ki=%.2f",kp,ki);
-		OLED_Printf(0,30,OLED_6X8,"kd=%.2f",kd);
-		OLED_Printf(60,30,OLED_6X8,"DiS=%04d",DirectSpeed);
-		OLED_Printf(0,40,OLED_6X8,"MSTS=%04d  MLTS=%04d",MSmallTurnSpeed,MLargeTurnSpeed);
-		OLED_Printf(0,50,OLED_6X8,"STS=%04d  LTS=%04d",SmallTuenSpeed,LargeTunrSpeed);
+		OLED_Printf(0,20,OLED_6X8,"LESO=%04d  LELO=%04d",LeftExcursion_Silght_Out,LeftExcursion_Large_Out);
+		OLED_Printf(0,30,OLED_6X8,"RESO=%04d RELO=%04d",RightExcursion_Silght_Out,RightExcursion_Large_Out);
+		OLED_Printf(0,40,OLED_6X8,"LTAO=%04d  LTVO=%04d",LeftTurn_Arched_Out,LeftTurn_Vertical_Out);
+		OLED_Printf(0,50,OLED_6X8,"RTAO=%04d  RTVO=%04d",RightTurn_Arched_Out,RightTurn_Vertical_Out);
 		OLED_Update();
 		if(State==0&&KeyNum==2)//在调试模式下
 		{
 			Menu_Indxe++;
 			if(Menu_Indxe>=9)Menu_Indxe=1;//一共8个可调参数
-			if(Menu_Indxe==1||Menu_Indxe==2||Menu_Indxe==3)
-			{
-				if(Menu_Indxe==1)OLED_Printf(60,0,OLED_8X16,"kp  ");
-				if(Menu_Indxe==2)OLED_Printf(60,0,OLED_8X16,"ki  ");
-				if(Menu_Indxe==3)OLED_Printf(60,0,OLED_8X16,"kd  ");
-				while(Key_GetNum()==0)//没有按键按下就进行调参
-				{
-					if(Menu_Indxe==1)kp+=(float)RotateEncoder_Get()/100;
-					if(Menu_Indxe==2)ki+=(float)RotateEncoder_Get()/100;
-					if(Menu_Indxe==3)kd+=(float)RotateEncoder_Get()/100;
-					OLED_Printf(0,20,OLED_6X8,"kp=%.2f  ki=%.2f",kp,ki);
-					OLED_Printf(0,30,OLED_6X8,"kd=%.2f",kd);
-					OLED_Update();
-					
-				}
-			}
 
-			if(Menu_Indxe==4||Menu_Indxe==5||Menu_Indxe==6||Menu_Indxe==7||Menu_Indxe==8)
+			if(Menu_Indxe==1)OLED_Printf(60,0,OLED_8X16,"LESO  ");
+			if(Menu_Indxe==2)OLED_Printf(60,0,OLED_8X16,"LELO  ");
+			if(Menu_Indxe==3)OLED_Printf(60,0,OLED_8X16,"RESO  ");
+			if(Menu_Indxe==4)OLED_Printf(60,0,OLED_8X16,"RELO  ");
+			if(Menu_Indxe==5)OLED_Printf(60,0,OLED_8X16,"LTAO  ");
+			if(Menu_Indxe==6)OLED_Printf(60,0,OLED_8X16,"LTVO  ");
+			if(Menu_Indxe==7)OLED_Printf(60,0,OLED_8X16,"RTAO  ");
+			if(Menu_Indxe==8)OLED_Printf(60,0,OLED_8X16,"RTVO  ");
+		
+			while(Key_GetNum()==0)//没有按键按下就进行调参
 			{
-				if(Menu_Indxe==4)OLED_Printf(60,0,OLED_8X16,"DiS  ");
-				if(Menu_Indxe==5)OLED_Printf(60,0,OLED_8X16,"MSTS  ");
-				if(Menu_Indxe==6)OLED_Printf(60,0,OLED_8X16,"MLTS  ");
-				if(Menu_Indxe==7)OLED_Printf(60,0,OLED_8X16,"STS  ");
-				if(Menu_Indxe==8)OLED_Printf(60,0,OLED_8X16,"LTS  ");
-				while(Key_GetNum()==0)//没有按键按下就进行调参
-				{
-					if(Menu_Indxe==4)DirectSpeed+=RotateEncoder_Get()*5;
-					if(Menu_Indxe==5)MSmallTurnSpeed+=RotateEncoder_Get()*5;
-					if(Menu_Indxe==6)MLargeTurnSpeed+=RotateEncoder_Get()*5;
-					if(Menu_Indxe==7)SmallTuenSpeed+=RotateEncoder_Get()*5;
-					if(Menu_Indxe==8)LargeTunrSpeed+=RotateEncoder_Get()*5;
-					OLED_Printf(60,30,OLED_6X8,"DiS=%04d",DirectSpeed);
-					OLED_Printf(0,40,OLED_6X8,"MSTS=%04d  MLTS=%04d",MSmallTurnSpeed,MLargeTurnSpeed);
-					OLED_Printf(0,50,OLED_6X8,"STS=%04d  LTS=%04d",SmallTuenSpeed,LargeTunrSpeed);
-					OLED_Update();
+				if(Menu_Indxe==1)LeftExcursion_Silght_Out+=RotateEncoder_Get()*5;
+				if(Menu_Indxe==2)LeftExcursion_Large_Out+=RotateEncoder_Get()*5;
+				if(Menu_Indxe==3)RightExcursion_Silght_Out+=RotateEncoder_Get()*5;
+				if(Menu_Indxe==4)RightExcursion_Large_Out+=RotateEncoder_Get()*5;
+				if(Menu_Indxe==5)LeftTurn_Arched_Out+=RotateEncoder_Get()*5;
+				if(Menu_Indxe==6)LeftTurn_Vertical_Out+=RotateEncoder_Get()*5;
+				if(Menu_Indxe==7)RightTurn_Arched_Out+=RotateEncoder_Get()*5;
+				if(Menu_Indxe==8)RightTurn_Vertical_Out+=RotateEncoder_Get()*5;
+
+
+				OLED_Printf(0,20,OLED_6X8,"LESO=%04d  LELO=%04d",LeftExcursion_Silght_Out,LeftExcursion_Large_Out);
+				OLED_Printf(0,30,OLED_6X8,"RESO=%04d RELO=%04d",RightExcursion_Silght_Out,RightExcursion_Large_Out);
+				OLED_Printf(0,40,OLED_6X8,"LTAO=%04d  LTVO=%04d",LeftTurn_Arched_Out,LeftTurn_Vertical_Out);
+				OLED_Printf(0,50,OLED_6X8,"RTAO=%04d  RTVO=%04d",RightTurn_Arched_Out,RightTurn_Vertical_Out);
+				
+				OLED_Update();
 					
-				}
 			}
 
 
@@ -99,8 +98,6 @@ int main()
 
 }
 }
-
-
 
 void TIM1_UP_IRQHandler(void)
 {

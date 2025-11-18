@@ -3,7 +3,7 @@
 #include "Motor.h"
 #include "Encoder.h"
 
-extern float kp,ki,kd;
+float kp,ki,kd;
 
 void Left1Control(int  Target)
 {
