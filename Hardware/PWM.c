@@ -42,7 +42,8 @@ void PWM_Init(void)
 	TIM_OC3Init(TIM3, &TIM_OCInitStructure);
 	TIM_OC4Init(TIM3, &TIM_OCInitStructure);
 	
-	//把这个放在合适的地方用于开启电机TIM_Cmd(TIM2, ENABLE);TIM_Cmd(TIM3, ENABLE);
+	TIM_Cmd(TIM2, ENABLE);
+	TIM_Cmd(TIM3, ENABLE);
 }
 
 void PWM_SetCompare_Left1(uint16_t Compare)
