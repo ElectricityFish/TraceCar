@@ -201,8 +201,8 @@ void Motor_Set(void)
 			OLED_Update();
 			Motor_SetPWM_Left1(50);
 			Motor_SetPWM_Left2(50);
-			Motor_SetPWM_Right1(LeftTurn_Arched);
-			Motor_SetPWM_Right2(LeftTurn_Arched);
+			Motor_SetPWM_Right1(LeftTurn_Arched_Out);
+			Motor_SetPWM_Right2(LeftTurn_Arched_Out);
 			break;
 		}
 		case LeftTurn_Vertical:
@@ -219,8 +219,8 @@ void Motor_Set(void)
 		{
 			OLED_Printf(60,0,OLED_6X8,"RightTurn_Arched      ");
 			OLED_Update();
-			Motor_SetPWM_Left1(RightTurn_Arched);
-			Motor_SetPWM_Left2(RightTurn_Arched);
+			Motor_SetPWM_Left1(RightTurn_Arched_Out);
+			Motor_SetPWM_Left2(RightTurn_Arched_Out);
 			Motor_SetPWM_Right1(50);
 			Motor_SetPWM_Right2(50);
 			break;
@@ -243,6 +243,7 @@ void Motor_Set(void)
 			Motor_SetPWM_Left2(0);
 			Motor_SetPWM_Right1(0);
 			Motor_SetPWM_Right2(0);
+			break;
 		}
 		
 
