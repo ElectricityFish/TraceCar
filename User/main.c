@@ -10,11 +10,12 @@
 #include "RotateEncoder.h"
 
 
+//这里都是制动速度
 int8_t DirectOut=100;
-int8_t LeftExcursion_Silght_Out=100,LeftExcursion_Large_Out=85;
-int8_t RightExcursion_Silght_Out=100,RightExcursion_Large_Out=85;
-int8_t LeftTurn_Arched_Out=80,LeftTurn_Vertical_Out=70;
-int8_t RightTurn_Arched_Out=80,RightTurn_Vertical_Out=70;
+int8_t LeftExcursion_Silght_Out=80,LeftExcursion_Large_Out=80;
+int8_t RightExcursion_Silght_Out=80,RightExcursion_Large_Out=80;
+int8_t LeftTurn_Arched_Out=80,LeftTurn_Vertical_Out=60;
+int8_t RightTurn_Arched_Out=80,RightTurn_Vertical_Out=60;
 uint8_t KeyNum,State;
 uint8_t CarState;
 
@@ -119,7 +120,7 @@ void TIM1_UP_IRQHandler(void)
 		if(State==1)
 		{
 			Count++;
-			if(Count>=40)
+			if(Count>=20)
 			{
 				Count=0;
 				CarState=Trace_GetState();
@@ -161,8 +162,8 @@ void Motor_Set(void)
 			OLED_Update();
 			Motor_SetPWM_Left1(LeftExcursion_Silght_Out);
 			Motor_SetPWM_Left2(LeftExcursion_Silght_Out);
-			Motor_SetPWM_Right1(70);
-			Motor_SetPWM_Right2(70);
+			Motor_SetPWM_Right1(50);
+			Motor_SetPWM_Right2(50);
 			break;
 		}
 		case LeftExcursion_Large:
@@ -171,16 +172,16 @@ void Motor_Set(void)
 			OLED_Update();
 			Motor_SetPWM_Left1(LeftExcursion_Large_Out);
 			Motor_SetPWM_Left2(LeftExcursion_Large_Out);
-			Motor_SetPWM_Right1(50);
-			Motor_SetPWM_Right2(50);
+			Motor_SetPWM_Right1(35);
+			Motor_SetPWM_Right2(35);
 			break;
 		}
 		case RightExcursion_Silght:
 		{
 			OLED_Printf(60,0,OLED_6X8,"RightExcu_Silght         ");
 			OLED_Update();
-			Motor_SetPWM_Left1(70);
-			Motor_SetPWM_Left2(70);
+			Motor_SetPWM_Left1(50);
+			Motor_SetPWM_Left2(50);
 			Motor_SetPWM_Right1(RightExcursion_Silght_Out);
 			Motor_SetPWM_Right2(RightExcursion_Silght_Out);
 			break;
@@ -189,8 +190,8 @@ void Motor_Set(void)
 		{
 			OLED_Printf(60,0,OLED_6X8,"RightExcu_Large");
 			OLED_Update();
-			Motor_SetPWM_Left1(50);
-			Motor_SetPWM_Left2(50);
+			Motor_SetPWM_Left1(35);
+			Motor_SetPWM_Left2(35);
 			Motor_SetPWM_Right1(RightExcursion_Large_Out);
 			Motor_SetPWM_Right2(RightExcursion_Large_Out);
 			break;
@@ -199,8 +200,8 @@ void Motor_Set(void)
 		{
 			OLED_Printf(60,0,OLED_6X8,"LeftTurn_Arched         ");
 			OLED_Update();
-			Motor_SetPWM_Left1(50);
-			Motor_SetPWM_Left2(50);
+			Motor_SetPWM_Left1(35);
+			Motor_SetPWM_Left2(35);
 			Motor_SetPWM_Right1(LeftTurn_Arched_Out);
 			Motor_SetPWM_Right2(LeftTurn_Arched_Out);
 			break;
@@ -209,8 +210,8 @@ void Motor_Set(void)
 		{
 			OLED_Printf(60,0,OLED_6X8,"LeftTurn_Vertical          ");
 			OLED_Update();
-			Motor_SetPWM_Left1(35);
-			Motor_SetPWM_Left2(35);
+			Motor_SetPWM_Left1(30);
+			Motor_SetPWM_Left2(30);
 			Motor_SetPWM_Right1(LeftTurn_Vertical_Out);
 			Motor_SetPWM_Right2(LeftTurn_Vertical_Out);
 			break;
@@ -221,8 +222,8 @@ void Motor_Set(void)
 			OLED_Update();
 			Motor_SetPWM_Left1(RightTurn_Arched_Out);
 			Motor_SetPWM_Left2(RightTurn_Arched_Out);
-			Motor_SetPWM_Right1(50);
-			Motor_SetPWM_Right2(50);
+			Motor_SetPWM_Right1(35);
+			Motor_SetPWM_Right2(35);
 			break;
 		}
 		case RightTurn_Vertical:
@@ -231,8 +232,8 @@ void Motor_Set(void)
 			OLED_Update();
 			Motor_SetPWM_Left1(RightTurn_Vertical_Out);
 			Motor_SetPWM_Left2(RightTurn_Vertical_Out);
-			Motor_SetPWM_Right1(35);
-			Motor_SetPWM_Right2(35);
+			Motor_SetPWM_Right1(30);
+			Motor_SetPWM_Right2(30);
 			break;
 		}
 		default :

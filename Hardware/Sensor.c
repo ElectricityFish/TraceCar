@@ -43,30 +43,28 @@ uint8_t Trace_GetState(void)
     uint8_t R1 = Sensor_Right1;
     
     // 1. 先判断特殊路口情况
-    if(L1 == 0 && L2 == 0 && R2 == 0 && R1 == 0) {
-        return Direct; // 十字路口，直行通过
-    }
+    if(L1 == 0 && L2 == 0 && R2 == 0 && R1 == 0)return Direct; // 十字路口，直行通过 
     
     // 2. 直行 - 中间两个传感器在黑线上
-    if(L2 == 0 && R2 == 0 && L1 == 1 && R1 == 1) return Direct;
+    if(L1 == 1 && L2 == 0 && L2 == 0 && R1 == 1) return Direct;
     
     // 3. 转弯情况
-    // 左转弯
+    // 向左转弯
     if(L1 == 0 && L2 == 0 && R2 == 1 && R1 == 1) return LeftTurn_Arched;
     if(L1 == 0 && L2 == 0 && R2 == 0 && R1 == 1) return LeftTurn_Vertical;
     
-    // 右转弯  
+    // 向右转弯  
     if(L1 == 1 && L2 == 1 && R2 == 0 && R1 == 0) return RightTurn_Arched;
     if(L1 == 1 && L2 == 0 && R2 == 0 && R1 == 0) return RightTurn_Vertical;
     
     // 4. 偏移情况
     // 左偏移
-    if(L1==0&&L2 == 1 && R2 == 0 && R1 == 0) return LeftExcursion_Large;
-    if(L2 == 1 && R2 == 0 && L1 == 1 && R1 == 1) return LeftExcursion_Silght;
+    if(L1==1 &&L2 == 1 && R2 == 1 && R1 == 0) return LeftExcursion_Large;
+    if(L1 == 1 && L2 == 1 && R2 == 0 && R1 == 1) return LeftExcursion_Silght;
     
     // 右偏移
-    if(L2 == 0 && L1 == 0 && R2 == 1) return RightExcursion_Large;
-    if(L2 == 0 && R2 == 1 && L1 == 1 && R1 == 1) return RightExcursion_Silght;
+    if(L1 == 0 && L2 == 1 && R2 == 1&&R1==1) return RightExcursion_Large;
+    if(L1 == 1 && L2 == 0 && R2 == 1 && R1 == 1) return RightExcursion_Silght;
     
     // 5. 最后判断等待状态 - 所有传感器都在白线上
     if(L1 == 1 && L2 == 1 && R2 == 1 && R1 == 1) return Static;
