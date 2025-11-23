@@ -8,21 +8,18 @@
 #include "Serial.h"
 #include "Sensor.h"
 #include "RotateEncoder.h"
-#include "TraceTask.h"
+//#include "TraceTask.h"
 
 
 //这里都是制动速度
 int8_t DirectOut=100;
-int8_t Motive_Excursion_Silght_Out=80,Motive_Excursion_Large_Out=60;
-int8_t Motive_Turn_Arched_Out=80,Motive_Turn_Vertical_Out=60;
-
+int8_t Motive_Turn_Out=80;
 //以下是从动速度
-int8_t Follow_Excursion_Silght_Out=-60,Follow_Excursion_Large_Out=-100;
-int8_t Follow_Turn_Arched_Out=35,Follow_Turn_Vertical_Out=30;
+int8_t Follow_TurnOut=-60;
+
 
 uint8_t KeyNum,State;
-uint8_t CarState;
-
+Sensor_Get CarState;
 
 int main()
 {
@@ -63,80 +60,39 @@ int main()
 		 * 
 		 * 
 		*********************************************/
+
+		OLED_Printf(0,16,OLED_8X16,"Direct:%d",DirectOut);
+		OLED_Printf(0,32,OLED_8X16,"MotiveTurn=%d",Motive_Turn_Out);
+		OLED_Printf(0,48,OLED_8X16,"FollowTurn:%d",Follow_TurnOut);
 		
 		OLED_Update();
 		if(State==0&&(KeyNum==2||KeyNum==3))//在调试模式下
 		{
 			if(KeyNum==2)Menu_Indxe++;
 			if(KeyNum==3)Menu_Indxe--;
-
-			
-			if(Menu_Indxe>=9)Menu_Indxe=1;//一共8个可调参数
-			if(Menu_Indxe<=0)Menu_Indxe=8;
+			if(Menu_Indxe>=4)Menu_Indxe=1;//一共3个可调参数
+			if(Menu_Indxe<=0)Menu_Indxe=3;
 
 			while(Key_GetNum()==0)//没有按键按下就进行调参
 			{
-
 				if(Menu_Indxe==1)
 				{
-					OLED_Printf(60,0,OLED_8X16,"M_ESO  ");
-					OLED_Printf(0,20,OLED_8X16,"LESO:M=%03d,F=%03d",Motive_Excursion_Silght_Out,Follow_Excursion_Silght_Out);
+					OLED_Printf(60,0,OLED_8X16,"Direct  ");
 				}
 				if(Menu_Indxe==2)
 				{
-					OLED_Printf(60,0,OLED_8X16,"F_ESO  ");
-					OLED_Printf(0,20,OLED_8X16,"LESO:M=%03d,F=%03d",Motive_Excursion_Silght_Out,Follow_Excursion_Silght_Out);
+					OLED_Printf(60,0,OLED_8X16,"M_Turn  ");
 				}
-
-
 				if(Menu_Indxe==3)
 				{
-					OLED_Printf(60,0,OLED_8X16,"M_ELO  ");
-					OLED_Printf(0,20,OLED_8X16,"LELO:M=%03d,F=%03d",Motive_Excursion_Large_Out,Follow_Excursion_Large_Out);
+					OLED_Printf(60,0,OLED_8X16,"F_Turn  ");
 				}				
-				if(Menu_Indxe==4)
-				{
-					OLED_Printf(60,0,OLED_8X16,"F_ELO  ");
-					OLED_Printf(0,20,OLED_8X16,"LELO:M=%03d,F=%03d",Motive_Excursion_Large_Out,Follow_Excursion_Large_Out);
-
-				}
-
-				if(Menu_Indxe==5)
-				{
-					OLED_Printf(60,0,OLED_8X16,"M_TAO  ");
-					OLED_Printf(0,20,OLED_8X16,"LTAO:M=%03d,F=%03d",Motive_Turn_Arched_Out,Follow_Turn_Arched_Out);
-
-				}				
-				if(Menu_Indxe==6)
-				{
-					OLED_Printf(60,0,OLED_8X16,"F_TAO  ");
-					OLED_Printf(0,20,OLED_8X16,"LTAO:M=%03d,F=%03d",Motive_Turn_Arched_Out,Follow_Turn_Arched_Out);
-				}
-
-				if(Menu_Indxe==7)
-				{
-					OLED_Printf(60,0,OLED_8X16,"M_TVO  ");
-					OLED_Printf(0,20,OLED_8X16,"LTVO:M=%03d,F=%03d",Motive_Turn_Vertical_Out,Follow_Turn_Vertical_Out);
-
-				}				
-				if(Menu_Indxe==8)
-				{
-					OLED_Printf(60,0,OLED_8X16,"F_TVO  ");
-					OLED_Printf(0,20,OLED_8X16,"LTVO:M=%03d,F=%03d",Motive_Turn_Vertical_Out,Follow_Turn_Vertical_Out);
-				}
-
-				
-
-			
-
-				if(Menu_Indxe==1)Motive_Excursion_Silght_Out+=RotateEncoder_Get()*5;
-				if(Menu_Indxe==2)Follow_Excursion_Silght_Out+=RotateEncoder_Get()*5;
-				if(Menu_Indxe==3)Motive_Excursion_Large_Out+=RotateEncoder_Get()*5;
-				if(Menu_Indxe==4)Follow_Excursion_Large_Out+=RotateEncoder_Get()*5;
-				if(Menu_Indxe==5)Motive_Turn_Arched_Out+=RotateEncoder_Get()*5;
-				if(Menu_Indxe==6)Follow_Turn_Arched_Out+=RotateEncoder_Get()*5;
-				if(Menu_Indxe==7)Motive_Turn_Vertical_Out+=RotateEncoder_Get()*5;
-				if(Menu_Indxe==8)Follow_Turn_Vertical_Out+=RotateEncoder_Get()*5;
+				if(Menu_Indxe==1)DirectOut+=RotateEncoder_Get()*5;
+				if(Menu_Indxe==2)Motive_Turn_Out+=RotateEncoder_Get()*5;
+				if(Menu_Indxe==3)Follow_TurnOut+=RotateEncoder_Get()*5;
+				OLED_Printf(0,16,OLED_8X16,"Direct:%d",DirectOut);
+				OLED_Printf(0,32,OLED_8X16,"MotiveTurn=%d",Motive_Turn_Out);
+				OLED_Printf(0,48,OLED_8X16,"FollowTurn:%d",Follow_TurnOut);
 				OLED_Update();
 			}
 
@@ -163,98 +119,40 @@ void TIM1_UP_IRQHandler(void)
 			if(Count>=20)
 			{
 				Count=0;
-				//CarState=Trace_GetState();
-				//Motor_Set();
-				TaskPerformance();
+				CarState=Trace_GetState();
+				Motor_Set();
 			}
 		}
 		TIM_ClearITPendingBit(TIM1, TIM_IT_Update);
 	}
 }
 
-
 void Motor_Set(void)
 {
 	switch (CarState)
 	{
-		case Waiting:
-		{
-			Motor_SetPWM_Left1(60);
-			Motor_SetPWM_Left2(60);
-			Motor_SetPWM_Right1(60);
-			Motor_SetPWM_Right2(60);
-			break;
-		}
 		case Direct:
 		{
-			Motor_SetPWM_Left1(100);
-			Motor_SetPWM_Left2(100);
-			Motor_SetPWM_Right1(100);
-			Motor_SetPWM_Right2(100);
+			Motor_SetPWM_Left1(DirectOut);
+			Motor_SetPWM_Left2(DirectOut);
+			Motor_SetPWM_Right1(DirectOut);
+			Motor_SetPWM_Right2(DirectOut);
 			break;
 		}
-		case LeftExcursion_Silght:
+		case LeftTurn:
 		{
-			Motor_SetPWM_Left1(Motive_Excursion_Silght_Out);
-			Motor_SetPWM_Left2(Motive_Excursion_Silght_Out);
-			Motor_SetPWM_Right1(Follow_Excursion_Silght_Out);
-			Motor_SetPWM_Right2(Follow_Excursion_Silght_Out);
+			Motor_SetPWM_Left1(Follow_TurnOut);
+			Motor_SetPWM_Left2(Follow_TurnOut);
+			Motor_SetPWM_Right1(Motive_Turn_Out);
+			Motor_SetPWM_Right2(Motive_Turn_Out);
 			break;
 		}
-		case LeftExcursion_Large:
+		case RightTurn:
 		{
-			Motor_SetPWM_Left1(Motive_Excursion_Large_Out);
-			Motor_SetPWM_Left2(Motive_Excursion_Large_Out);
-			Motor_SetPWM_Right1(Follow_Excursion_Large_Out);
-			Motor_SetPWM_Right2(Follow_Excursion_Large_Out);
-			break;
-		}
-		case RightExcursion_Silght:
-		{
-			Motor_SetPWM_Left1(Follow_Excursion_Silght_Out);
-			Motor_SetPWM_Left2(Follow_Excursion_Silght_Out);
-			Motor_SetPWM_Right1(Motive_Excursion_Silght_Out);
-			Motor_SetPWM_Right2(Motive_Excursion_Silght_Out);
-			break;
-		}
-		case RightExcursion_Large:
-		{
-			Motor_SetPWM_Left1(Follow_Excursion_Large_Out);
-			Motor_SetPWM_Left2(Follow_Excursion_Large_Out);
-			Motor_SetPWM_Right1(Motive_Excursion_Large_Out);
-			Motor_SetPWM_Right2(Motive_Excursion_Large_Out);
-			break;
-		}
-		case LeftTurn_Arched:
-		{
-			Motor_SetPWM_Left1(Follow_Turn_Arched_Out);
-			Motor_SetPWM_Left2(Follow_Turn_Arched_Out);
-			Motor_SetPWM_Right1(Motive_Turn_Arched_Out);
-			Motor_SetPWM_Right2(Motive_Turn_Arched_Out);
-			break;
-		}
-		case LeftTurn_Vertical:
-		{
-			Motor_SetPWM_Left1(Follow_Turn_Vertical_Out);
-			Motor_SetPWM_Left2(Follow_Turn_Vertical_Out);
-			Motor_SetPWM_Right1(Motive_Turn_Vertical_Out);
-			Motor_SetPWM_Right2(Motive_Turn_Vertical_Out);
-			break;
-		}
-		case RightTurn_Arched:
-		{
-			Motor_SetPWM_Left1(Motive_Turn_Arched_Out);
-			Motor_SetPWM_Left2(Motive_Turn_Arched_Out);
-			Motor_SetPWM_Right1(Follow_Turn_Arched_Out);
-			Motor_SetPWM_Right2(Follow_Turn_Arched_Out);
-			break;
-		}
-		case RightTurn_Vertical:
-		{
-			Motor_SetPWM_Left1(Motive_Turn_Vertical_Out);
-			Motor_SetPWM_Left2(Motive_Turn_Vertical_Out);
-			Motor_SetPWM_Right1(Follow_Turn_Vertical_Out);
-			Motor_SetPWM_Right2(Follow_Turn_Vertical_Out);
+			Motor_SetPWM_Left1(Motive_Turn_Out);
+			Motor_SetPWM_Left2(Motive_Turn_Out);
+			Motor_SetPWM_Right1(Follow_TurnOut);
+			Motor_SetPWM_Right2(Follow_TurnOut);
 			break;
 		}
 		default :
@@ -265,13 +163,8 @@ void Motor_Set(void)
 			Motor_SetPWM_Right2(60);
 			break;
 		}
-		
-
-
-
 
 	}
-	
 	
 }
 
