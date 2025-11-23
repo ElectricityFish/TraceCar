@@ -8,7 +8,7 @@
 #define Sensor_Right2 GPIO_ReadInputDataBit(GPIOB,GPIO_Pin_15)
 
 //宏定义行驶状态
-#define Static 0                        //等待 
+#define Waiting 0                        //等待 
 #define Direct 1                        //直行
 #define LeftExcursion_Silght 2          //左轻微偏移
 #define LeftExcursion_Large 3           //左大偏移

@@ -671,14 +671,14 @@
               <FilePath>.\System\Timer.h</FilePath>
             </File>
             <File>
-              <FileName>PID.c</FileName>
+              <FileName>TraceTask.c</FileName>
               <FileType>1</FileType>
-              <FilePath>.\System\PID.c</FilePath>
+              <FilePath>.\System\TraceTask.c</FilePath>
             </File>
             <File>
-              <FileName>PID.h</FileName>
+              <FileName>TraceTask.h</FileName>
               <FileType>5</FileType>
-              <FilePath>.\System\PID.h</FilePath>
+              <FilePath>.\System\TraceTask.h</FilePath>
             </File>
           </Files>
         </Group>

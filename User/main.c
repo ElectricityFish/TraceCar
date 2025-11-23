@@ -8,15 +8,16 @@
 #include "Serial.h"
 #include "Sensor.h"
 #include "RotateEncoder.h"
+#include "TraceTask.h"
 
 
 //这里都是制动速度
 int8_t DirectOut=100;
-int8_t Motive_Excursion_Silght_Out=60,Motive_Excursion_Large_Out=100;
+int8_t Motive_Excursion_Silght_Out=80,Motive_Excursion_Large_Out=60;
 int8_t Motive_Turn_Arched_Out=80,Motive_Turn_Vertical_Out=60;
 
 //以下是从动速度
-int8_t Follow_Excursion_Silght_Out=-100,Follow_Excursion_Large_Out=-100;
+int8_t Follow_Excursion_Silght_Out=-60,Follow_Excursion_Large_Out=-100;
 int8_t Follow_Turn_Arched_Out=35,Follow_Turn_Vertical_Out=30;
 
 uint8_t KeyNum,State;
@@ -162,8 +163,9 @@ void TIM1_UP_IRQHandler(void)
 			if(Count>=20)
 			{
 				Count=0;
-				CarState=Trace_GetState();
-				Motor_Set();
+				//CarState=Trace_GetState();
+				//Motor_Set();
+				TaskPerformance();
 			}
 		}
 		TIM_ClearITPendingBit(TIM1, TIM_IT_Update);
@@ -175,10 +177,8 @@ void Motor_Set(void)
 {
 	switch (CarState)
 	{
-		case Static:
+		case Waiting:
 		{
-			//OLED_Printf(60,0,OLED_6X8,"Static           ");
-			//OLED_Update();
 			Motor_SetPWM_Left1(60);
 			Motor_SetPWM_Left2(60);
 			Motor_SetPWM_Right1(60);
@@ -187,8 +187,6 @@ void Motor_Set(void)
 		}
 		case Direct:
 		{
-			//OLED_Printf(60,0,OLED_6X8,"Direct          ");
-			//OLED_Update();
 			Motor_SetPWM_Left1(100);
 			Motor_SetPWM_Left2(100);
 			Motor_SetPWM_Right1(100);
@@ -197,8 +195,6 @@ void Motor_Set(void)
 		}
 		case LeftExcursion_Silght:
 		{
-			//OLED_Printf(60,0,OLED_6X8,"LeftExcur_Silght             ");
-			//OLED_Update();
 			Motor_SetPWM_Left1(Motive_Excursion_Silght_Out);
 			Motor_SetPWM_Left2(Motive_Excursion_Silght_Out);
 			Motor_SetPWM_Right1(Follow_Excursion_Silght_Out);
@@ -207,8 +203,6 @@ void Motor_Set(void)
 		}
 		case LeftExcursion_Large:
 		{
-			//OLED_Printf(60,0,OLED_6X8,"LeftExcu_Large        ");
-			//OLED_Update();
 			Motor_SetPWM_Left1(Motive_Excursion_Large_Out);
 			Motor_SetPWM_Left2(Motive_Excursion_Large_Out);
 			Motor_SetPWM_Right1(Follow_Excursion_Large_Out);
@@ -217,8 +211,6 @@ void Motor_Set(void)
 		}
 		case RightExcursion_Silght:
 		{
-			//OLED_Printf(60,0,OLED_6X8,"RightExcu_Silght         ");
-			//OLED_Update();
 			Motor_SetPWM_Left1(Follow_Excursion_Silght_Out);
 			Motor_SetPWM_Left2(Follow_Excursion_Silght_Out);
 			Motor_SetPWM_Right1(Motive_Excursion_Silght_Out);
@@ -227,8 +219,6 @@ void Motor_Set(void)
 		}
 		case RightExcursion_Large:
 		{
-			//OLED_Printf(60,0,OLED_6X8,"RightExcu_Large");
-			//OLED_Update();
 			Motor_SetPWM_Left1(Follow_Excursion_Large_Out);
 			Motor_SetPWM_Left2(Follow_Excursion_Large_Out);
 			Motor_SetPWM_Right1(Motive_Excursion_Large_Out);
@@ -237,8 +227,6 @@ void Motor_Set(void)
 		}
 		case LeftTurn_Arched:
 		{
-			//OLED_Printf(60,0,OLED_6X8,"LeftTurn_Arched         ");
-			//OLED_Update();
 			Motor_SetPWM_Left1(Follow_Turn_Arched_Out);
 			Motor_SetPWM_Left2(Follow_Turn_Arched_Out);
 			Motor_SetPWM_Right1(Motive_Turn_Arched_Out);
@@ -247,8 +235,6 @@ void Motor_Set(void)
 		}
 		case LeftTurn_Vertical:
 		{
-			//OLED_Printf(60,0,OLED_6X8,"LeftTurn_Vertical          ");
-			//OLED_Update();
 			Motor_SetPWM_Left1(Follow_Turn_Vertical_Out);
 			Motor_SetPWM_Left2(Follow_Turn_Vertical_Out);
 			Motor_SetPWM_Right1(Motive_Turn_Vertical_Out);
@@ -257,8 +243,6 @@ void Motor_Set(void)
 		}
 		case RightTurn_Arched:
 		{
-			//OLED_Printf(60,0,OLED_6X8,"RightTurn_Arched      ");
-			//OLED_Update();
 			Motor_SetPWM_Left1(Motive_Turn_Arched_Out);
 			Motor_SetPWM_Left2(Motive_Turn_Arched_Out);
 			Motor_SetPWM_Right1(Follow_Turn_Arched_Out);
@@ -267,8 +251,6 @@ void Motor_Set(void)
 		}
 		case RightTurn_Vertical:
 		{
-			//OLED_Printf(60,0,OLED_6X8,"RightTurn_Vertical     ");
-			//OLED_Update();
 			Motor_SetPWM_Left1(Motive_Turn_Vertical_Out);
 			Motor_SetPWM_Left2(Motive_Turn_Vertical_Out);
 			Motor_SetPWM_Right1(Follow_Turn_Vertical_Out);
@@ -277,8 +259,6 @@ void Motor_Set(void)
 		}
 		default :
 		{
-			//OLED_Printf(60,0,OLED_6X8,"Other         ");
-			//OLED_Update();
 			Motor_SetPWM_Left1(60);
 			Motor_SetPWM_Left2(60);
 			Motor_SetPWM_Right1(60);
@@ -294,25 +274,4 @@ void Motor_Set(void)
 	
 	
 }
-/*
-int8_t DirectOut=100;
-int8_t LeftExcursion_Silght_Out,LeftExcursion_Large_Out;
-int8_t RightExcursion_Silght_Out,RightExcursion_Large_Out;
-int8_t LeftTurn_Arched_Out,LeftTurn_Vertical_Out;
-int8_t RightTurn_Arched_Out,RightTurn_Vertical_Out;
-uint8_t KeyNum,State;
-uint8_t CarState;
-*/
 
-/*
-#define Static 0                        //等待 
-#define Direct 1                        //直行
-#define LeftExcursion_Silght 2          //左轻微偏移
-#define LeftExcursion_Large 3           //左大偏移
-#define RightExcursion_Silght 4         //右轻微偏移
-#define RightExcursion_Large 5          //右大偏移
-#define LeftTurn_Arched 6               //左圆角转弯
-#define LeftTurn_Vertical 7             //左直角转弯
-#define RightTurn_Arched 8              //右圆角转弯
-#define RightTurn_Vertical 9            //右直角转弯
-*/
