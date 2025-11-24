@@ -8,9 +8,12 @@
 #define Sensor_Right2 GPIO_ReadInputDataBit(GPIOB,GPIO_Pin_15)
 
 typedef enum{
+    DDirect,
     Direct,
     LeftTurn,
-    RightTurn
+    RightTurn,
+    LeftTurn_Large,
+    RightTurn_Large
 }Sensor_Get;
 
 //循迹逻辑
