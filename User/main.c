@@ -8,18 +8,13 @@
 #include "Serial.h"
 #include "Sensor.h"
 #include "RotateEncoder.h"
-//#include "TraceTask.h"
+#include "TraceTask.h"
 
 
 //这里都是制动速度
-int8_t DirectOut=60;
-int8_t Motive_Turn_Out=50;
-//以下是从动速度
-int8_t Follow_TurnOut=-10;
-
-
+extern float DirectOut;
 uint8_t KeyNum,State;
-Sensor_Get CarState;
+extern float kp,ki,kd;
 
 int main()
 {
@@ -32,13 +27,6 @@ int main()
 	Timer_Init();//一般定时器在最后初始化
 	uint8_t Menu_Indxe=0;
 	
-
-
-	//Motor_SetPWM_Left1(40);
-	//Motor_SetPWM_Left2(40);
-	//Motor_SetPWM_Right1(40);
-	//Motor_SetPWM_Right2(40);
-
 	while(1)
 	{
 		KeyNum=Key_GetNum();
@@ -62,17 +50,18 @@ int main()
 		*********************************************/
 
 		OLED_Printf(0,16,OLED_8X16,"Direct:%4d",DirectOut);
-		OLED_Printf(0,32,OLED_8X16,"MotiveTurn=%4d",Motive_Turn_Out);
-		OLED_Printf(0,48,OLED_8X16,"FollowTurn:%4d",Follow_TurnOut);
+		OLED_Printf(0,32,OLED_8X16,"kp=%02f,ki=%02f",kp,ki);
+		OLED_Printf(0,48,OLED_8X16,"kd=%02f",kd);
 		
 		OLED_Update();
 		if(State==0&&(KeyNum==2||KeyNum==3))//在调试模式下
 		{
 			if(KeyNum==2)Menu_Indxe++;
 			if(KeyNum==3)Menu_Indxe--;
-			if(Menu_Indxe>=4)Menu_Indxe=1;//一共3个可调参数
-			if(Menu_Indxe<=0)Menu_Indxe=3;
+			if(Menu_Indxe>=5)Menu_Indxe=1;//一共4个可调参数
+			if(Menu_Indxe<=0)Menu_Indxe=4;
 
+			LED_OFF();
 			while(Key_GetNum()==0)//没有按键按下就进行调参
 			{
 				if(Menu_Indxe==1)
@@ -81,19 +70,24 @@ int main()
 				}
 				if(Menu_Indxe==2)
 				{
-					OLED_Printf(60,0,OLED_8X16,"M_Turn  ");
+					OLED_Printf(60,0,OLED_8X16,"kp     ");
 				}
 				if(Menu_Indxe==3)
 				{
-					OLED_Printf(60,0,OLED_8X16,"F_Turn  ");
-				}				
-				if(Menu_Indxe==1)DirectOut+=RotateEncoder_Get()*5;
-				if(Menu_Indxe==2)Motive_Turn_Out+=RotateEncoder_Get()*5;
-				if(Menu_Indxe==3)Follow_TurnOut+=RotateEncoder_Get()*5;
+					OLED_Printf(60,0,OLED_8X16,"ki     ");
+				}
+				if(Menu_Indxe==3)
+				{
+					OLED_Printf(60,0,OLED_8X16,"kd     ");
+				}
+				int8_t change=RotateEncoder_Get();		
+				if(Menu_Indxe==1)DirectOut+=change;
+				if(Menu_Indxe==2)kp+=(float)change*0.01;
+				if(Menu_Indxe==3)ki+=(float)change*0.01;
+				if(Menu_Indxe==4)kd+=(float)change*0.01;
 				OLED_Printf(0,16,OLED_8X16,"Direct:%4d",DirectOut);
-				OLED_Printf(0,32,OLED_8X16,"MotiveTurn=%4d",Motive_Turn_Out);
-				OLED_Printf(0,48,OLED_8X16,"FollowTurn:%4d",Follow_TurnOut);
-				OLED_Update();
+				OLED_Printf(0,32,OLED_8X16,"kp=%02f,ki=%02f",kp,ki);
+				OLED_Printf(0,48,OLED_8X16,"kd=%02f",kd);
 			}
 
 
@@ -104,96 +98,19 @@ int main()
 }
 }
 
-void Motor_Set(void);
-
 void TIM1_UP_IRQHandler(void)
 {
-	static uint8_t Count;
 	if (TIM_GetITStatus(TIM1, TIM_IT_Update) == SET)
 	{
 		
 		Key_Tick();
 		if(State==1)
 		{
-			Count++;
-			if(Count>=50)
-			{
-				Count=0;
-				CarState=Trace_GetState();
-				Motor_Set();
-			}
+			LED_ON();
+			PID_SetSpeed();
 		}
 		TIM_ClearITPendingBit(TIM1, TIM_IT_Update);
 	}
 }
 
-void Motor_Set(void)
-{
-	switch (CarState)
-	{
-		case DDirect:
-		{
-			Motor_SetPWM_Left1(DirectOut+20);
-			Motor_SetPWM_Left2(DirectOut+20);
-			Motor_SetPWM_Right1(DirectOut+20);
-			Motor_SetPWM_Right2(DirectOut+20);
-			break;
-		}
-
-		case Direct:
-		{
-			Motor_SetPWM_Left1(DirectOut);
-			Motor_SetPWM_Left2(DirectOut);
-			Motor_SetPWM_Right1(DirectOut);
-			Motor_SetPWM_Right2(DirectOut);
-			break;
-		}
-		case LeftTurn:
-		{
-			Motor_SetPWM_Left1(Follow_TurnOut);
-			Motor_SetPWM_Left2(Follow_TurnOut);
-			Motor_SetPWM_Right1(Motive_Turn_Out);
-			Motor_SetPWM_Right2(Motive_Turn_Out);
-			Delay_ms(200);
-			break;
-		}
-		case RightTurn:
-		{
-			Motor_SetPWM_Left1(Motive_Turn_Out);
-			Motor_SetPWM_Left2(Motive_Turn_Out);
-			Motor_SetPWM_Right1(Follow_TurnOut);
-			Motor_SetPWM_Right2(Follow_TurnOut);
-			Delay_ms(200);
-			break;
-		}
-		case LeftTurn_Large:
-		{
-			Motor_SetPWM_Left1(Follow_TurnOut);
-			Motor_SetPWM_Left2(Follow_TurnOut);
-			Motor_SetPWM_Right1(Motive_Turn_Out);
-			Motor_SetPWM_Right2(Motive_Turn_Out);
-			Delay_ms(800);
-			break;
-		}
-		case RightTurn_Large:
-		{
-			Motor_SetPWM_Left1(Motive_Turn_Out);
-			Motor_SetPWM_Left2(Motive_Turn_Out);
-			Motor_SetPWM_Right1(Follow_TurnOut);
-			Motor_SetPWM_Right2(Follow_TurnOut);
-			Delay_ms(800);
-			break;
-		}
-		default :
-		{
-			Motor_SetPWM_Left1(60);
-			Motor_SetPWM_Left2(60);
-			Motor_SetPWM_Right1(60);
-			Motor_SetPWM_Right2(60);
-			break;
-		}
-
-	}
-	
-}
 

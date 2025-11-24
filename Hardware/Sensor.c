@@ -8,17 +8,6 @@
 #define Sensor_FarLeft GPIO_ReadInputDataBit(GPIOA,GPIO_Pin_9)
 #define Sensor_FarRight GPIO_ReadInputDataBit(GPIOA,GPIO_Pin_8)
 
-
-//枚举行驶状态
-typedef enum{
-    DDirect,
-    Direct,
-    LeftTurn,
-    RightTurn,
-    LeftTurn_Large,
-    RightTurn_large
-}Sensor_Get;
-
 void Sensor_Init(void)
 {
     RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOB, ENABLE);
@@ -29,48 +18,23 @@ void Sensor_Init(void)
     GPIO_Init(GPIOB,&GPIO_InitStruct);
     GPIO_InitStruct.GPIO_Pin=GPIO_Pin_8|GPIO_Pin_9;
     GPIO_Init(GPIOA,&GPIO_InitStruct);
-
-
 }
 
-Sensor_Get Trace_GetState(void)
+
+int16_t Sensor_Get_WeightError(void)//获取加权偏移误差
 {
-    uint8_t L = Sensor_Left1;
-    uint8_t L2 = Sensor_Left2;
-    uint8_t R2 = Sensor_Right2; 
-    uint8_t R = Sensor_Right1;
-    uint8_t FL=Sensor_FarLeft;
-    uint8_t FR=Sensor_FarRight;
-    uint8_t Mid;
-    if(L2==0||R2==0)
-    {
-        Mid=0;
-    }else{
-        Mid=1;
-    }
+    //取反将黑线变为1
+    int8_t L = !Sensor_Left1;
+    int8_t L_Mid = !Sensor_Left2;
+    int8_t R_Mid = !Sensor_Right2; 
+    int8_t R = !Sensor_Right1;
+    int8_t FL=!Sensor_FarLeft;
+    int8_t FR=!Sensor_FarRight;
     
+    //L_Mid为-1，L权重为-3，FL为-5，R_Mid为1，R权重为3，FR为5
+    int16_t Error;
+    Error=(-1)*L_Mid+(-3)*L+(-5)*FL+R_Mid+3*R+5*FR;
     
-    
-    // 1，直行
-    if(L == 0 && Mid==0&& R == 0)return Direct; // 十字路口，直行通过     
-    if(L == 1 && Mid==0 && R == 1) return DDirect;  
-    if(L==0&&Mid==1&&R==0)return  Direct;
-    if(L==1&&Mid==1&&R==1)return Direct;
-    // 2,左转情况
-    if(L==0&&Mid==0&&R==1)return LeftTurn;
-    if(L==0&&Mid==1&&R==1)return LeftTurn;
-    //3，右转
-    if(L==1&&Mid==0&&R==0)return RightTurn;
-    if(L==1&&Mid==1&&R==0)return RightTurn;
-    //大左转
-    if(FL==0)return LeftTurn_Large;
-    //大右转
-    if(FL==0)return LeftTurn_Large;
-
-
-
-
-    return Direct;
-    
+    return Error;
 }
 

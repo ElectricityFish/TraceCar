@@ -7,16 +7,7 @@
 #define Sensor_Right1 GPIO_ReadInputDataBit(GPIOB,GPIO_Pin_14)
 #define Sensor_Right2 GPIO_ReadInputDataBit(GPIOB,GPIO_Pin_15)
 
-typedef enum{
-    DDirect,
-    Direct,
-    LeftTurn,
-    RightTurn,
-    LeftTurn_Large,
-    RightTurn_Large
-}Sensor_Get;
-
 //循迹逻辑
-Sensor_Get  Trace_GetState(void);
+int16_t Sensor_Get_WeightError(void);//获取加权偏移误差
 void Sensor_Init(void);
 #endif
