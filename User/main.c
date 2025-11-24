@@ -10,11 +10,10 @@
 #include "RotateEncoder.h"
 #include "TraceTask.h"
 
-
-//这里都是制动速度
-extern float DirectOut;
 uint8_t KeyNum,State;
-extern float kp,ki,kd;
+float kp=0.2,ki=0,kd=0;
+int8_t DirectOut=60;
+extern float Current_Error,Previous_Error,Error_Sum;
 
 int main()
 {
@@ -38,6 +37,10 @@ int main()
 			Motor_SetPWM_Right1(0);
 			Motor_SetPWM_Right2(0);
 			OLED_Printf(0,0,OLED_8X16,"Debug                                    ");
+			Current_Error=0;
+			Previous_Error=0;
+			Error_Sum=0;
+			//清除误差
 		}
 		if(State==1)OLED_Printf(0,0,OLED_8X16,"RUN                                      ");
 		/********************************************* 
@@ -49,10 +52,9 @@ int main()
 		 * 
 		*********************************************/
 
-		OLED_Printf(0,16,OLED_8X16,"Direct:%4d",DirectOut);
-		OLED_Printf(0,32,OLED_8X16,"kp=%02f,ki=%02f",kp,ki);
-		OLED_Printf(0,48,OLED_8X16,"kd=%02f",kd);
-		
+		OLED_Printf(0,16,OLED_8X16,"Direct:%3d",DirectOut);
+		OLED_Printf(0,32,OLED_8X16,"kp=%.1f,ki=%.1f",kp,ki);
+		OLED_Printf(0,48,OLED_8X16,"kd=%.1f",kd);
 		OLED_Update();
 		if(State==0&&(KeyNum==2||KeyNum==3))//在调试模式下
 		{
@@ -76,18 +78,19 @@ int main()
 				{
 					OLED_Printf(60,0,OLED_8X16,"ki     ");
 				}
-				if(Menu_Indxe==3)
+				if(Menu_Indxe==4)
 				{
 					OLED_Printf(60,0,OLED_8X16,"kd     ");
 				}
 				int8_t change=RotateEncoder_Get();		
 				if(Menu_Indxe==1)DirectOut+=change;
-				if(Menu_Indxe==2)kp+=(float)change*0.01;
-				if(Menu_Indxe==3)ki+=(float)change*0.01;
-				if(Menu_Indxe==4)kd+=(float)change*0.01;
-				OLED_Printf(0,16,OLED_8X16,"Direct:%4d",DirectOut);
-				OLED_Printf(0,32,OLED_8X16,"kp=%02f,ki=%02f",kp,ki);
-				OLED_Printf(0,48,OLED_8X16,"kd=%02f",kd);
+				if(Menu_Indxe==2)kp+=(float)change*0.1;
+				if(Menu_Indxe==3)ki+=(float)change*0.1;
+				if(Menu_Indxe==4)kd+=(float)change*0.1;
+				OLED_Printf(0,16,OLED_8X16,"Direct:%3d",DirectOut);
+				OLED_Printf(0,32,OLED_8X16,"kp=%.1f,ki=%.1f",kp,ki);
+				OLED_Printf(0,48,OLED_8X16,"kd=%.1f",kd);
+				OLED_Update();
 			}
 
 

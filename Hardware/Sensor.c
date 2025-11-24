@@ -5,8 +5,8 @@
 #define Sensor_Left2 GPIO_ReadInputDataBit(GPIOB,GPIO_Pin_13)
 #define Sensor_Right1 GPIO_ReadInputDataBit(GPIOB,GPIO_Pin_14)
 #define Sensor_Right2 GPIO_ReadInputDataBit(GPIOB,GPIO_Pin_15)
-#define Sensor_FarLeft GPIO_ReadInputDataBit(GPIOA,GPIO_Pin_9)
-#define Sensor_FarRight GPIO_ReadInputDataBit(GPIOA,GPIO_Pin_8)
+#define Sensor_FarLeft GPIO_ReadInputDataBit(GPIOA,GPIO_Pin_8)
+#define Sensor_FarRight GPIO_ReadInputDataBit(GPIOA,GPIO_Pin_9)
 
 void Sensor_Init(void)
 {
@@ -31,9 +31,9 @@ int16_t Sensor_Get_WeightError(void)//获取加权偏移误差
     int8_t FL=!Sensor_FarLeft;
     int8_t FR=!Sensor_FarRight;
     
-    //L_Mid为-1，L权重为-3，FL为-5，R_Mid为1，R权重为3，FR为5
+    //L_Mid为-5，L权重为-10，FL为-20，R_Mid为5，R权重为10，FR为20
     int16_t Error;
-    Error=(-1)*L_Mid+(-3)*L+(-5)*FL+R_Mid+3*R+5*FR;
+    Error=(-5)*L_Mid+(-10)*L+(-20)*FL+R_Mid*5+10*R+20*FR;
     
     return Error;
 }

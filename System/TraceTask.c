@@ -2,11 +2,11 @@
 #include "Sensor.h"
 #include "Motor.h"
 
-float kp=0.2,ki=0,kd=0;
+extern int8_t DirectOut;
+extern float kp,ki,kd;
 float Current_Error,Previous_Error,Error_Sum;
 float PID_Out;
 
-float DirectOut=60;
 void PID_SetSpeed(void)
 {
 
@@ -27,8 +27,8 @@ void PID_SetSpeed(void)
         float Left_Out=DirectOut+PID_Out;
         float Right_Out=DirectOut-PID_Out;
         //输出限幅
-        if(Left_Out>=100)Left_Out=60;
-        if(Left_Out<=-100)Left_Out=-40;
+        if(Left_Out>=60)Left_Out=60;
+        if(Left_Out<=-40)Left_Out=-40;
 
         if(Right_Out>=100)Right_Out=60;
         if(Right_Out<=-100)Right_Out=-40;
