@@ -11,8 +11,8 @@
 #include "TraceTask.h"
 
 uint8_t KeyNum,State;
-float kp=0.2,ki=0,kd=0;
-int8_t DirectOut=60;
+float kp=5.0,ki=0.0,kd=0.0;
+int8_t DirectOut=80;
 extern float Current_Error,Previous_Error,Error_Sum;
 
 int main()

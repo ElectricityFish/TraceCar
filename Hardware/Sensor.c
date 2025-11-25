@@ -31,9 +31,9 @@ int16_t Sensor_Get_WeightError(void)//获取加权偏移误差
     int8_t FL=!Sensor_FarLeft;
     int8_t FR=!Sensor_FarRight;
     
-    //L_Mid为-5，L权重为-10，FL为-20，R_Mid为5，R权重为10，FR为20
+    //L_Mid为-1，L权重为-3，FL为-9，R_Mid为1，R权重为3，FR为9
     int16_t Error;
-    Error=(-5)*L_Mid+(-10)*L+(-20)*FL+R_Mid*5+10*R+20*FR;
+    Error=(-1)*L_Mid+(-3)*L+(-9)*FL+R_Mid+3*R+9*FR;
     
     return Error;
 }
