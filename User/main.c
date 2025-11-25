@@ -11,8 +11,8 @@
 #include "TraceTask.h"
 
 uint8_t KeyNum,State;
-float kp=5.0,ki=0.0,kd=0.0;
-int8_t DirectOut=80;
+float kp=20.0,ki=0.0,kd=0.0;
+int8_t DirectOut=60;
 extern float Current_Error,Previous_Error,Error_Sum;
 
 int main()
@@ -32,6 +32,7 @@ int main()
 		if(KeyNum==1)State=!State;
 		if(State==0)
 		{
+			LED_OFF();
 			Motor_SetPWM_Left1(0);
 			Motor_SetPWM_Left2(0);
 			Motor_SetPWM_Right1(0);
@@ -53,7 +54,7 @@ int main()
 		*********************************************/
 
 		OLED_Printf(0,16,OLED_8X16,"Direct:%3d",DirectOut);
-		OLED_Printf(0,32,OLED_8X16,"kp=%.1f,ki=%.1f",kp,ki);
+		OLED_Printf(0,32,OLED_8X16,"p=%.1f,i=%.2f",kp,ki);
 		OLED_Printf(0,48,OLED_8X16,"kd=%.1f",kd);
 		OLED_Update();
 		if(State==0&&(KeyNum==2||KeyNum==3))//在调试模式下
@@ -63,7 +64,6 @@ int main()
 			if(Menu_Indxe>=5)Menu_Indxe=1;//一共4个可调参数
 			if(Menu_Indxe<=0)Menu_Indxe=4;
 
-			LED_OFF();
 			while(Key_GetNum()==0)//没有按键按下就进行调参
 			{
 				if(Menu_Indxe==1)
@@ -85,10 +85,10 @@ int main()
 				int8_t change=RotateEncoder_Get();		
 				if(Menu_Indxe==1)DirectOut+=change;
 				if(Menu_Indxe==2)kp+=(float)change*0.1;
-				if(Menu_Indxe==3)ki+=(float)change*0.1;
+				if(Menu_Indxe==3)ki+=(float)change*0.01;
 				if(Menu_Indxe==4)kd+=(float)change*0.1;
 				OLED_Printf(0,16,OLED_8X16,"Direct:%3d",DirectOut);
-				OLED_Printf(0,32,OLED_8X16,"kp=%.1f,ki=%.1f",kp,ki);
+				OLED_Printf(0,32,OLED_8X16,"p=%.1f,i=%.2f",kp,ki);
 				OLED_Printf(0,48,OLED_8X16,"kd=%.1f",kd);
 				OLED_Update();
 			}

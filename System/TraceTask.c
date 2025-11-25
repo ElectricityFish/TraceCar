@@ -1,6 +1,7 @@
 #include "stm32f10x.h"                  // Device header
 #include "Sensor.h"
 #include "Motor.h"
+#include <math.h>
 
 extern int8_t DirectOut;
 extern float kp,ki,kd;
@@ -12,9 +13,9 @@ void PID_SetSpeed(void)
 
     static uint8_t Count;
     Count++;
-    if(Count>=40)
+    if(Count>=20)
     {
-        Count=0;//每40ms调控一次
+        Count=0;//每20ms调控一次
         Previous_Error=Current_Error;
         Current_Error=Sensor_Get_WeightError();
         Error_Sum+=Current_Error;
@@ -24,13 +25,13 @@ void PID_SetSpeed(void)
         {
             Error_Sum+=Current_Error;
         }else{
-            Error_Sum=0;
+            Error_Sum=+Current_Error/2;
         }
 
         float Error_Init=ki*Error_Sum;
         //积分限幅
-        if(Error_Init>=60)Error_Init=60;
-        if(Error_Init<=-60)Error_Init=-60;
+        if(Error_Init>=40)Error_Init=40;
+        if(Error_Init<=-30)Error_Init=-30;
 
         PID_Out=kp*Current_Error+Error_Init+kd*(Current_Error-Previous_Error);
         float Left_Out=DirectOut+PID_Out;
@@ -39,11 +40,11 @@ void PID_SetSpeed(void)
 
 
         //输出限幅
-        if(Left_Out>=100)Left_Out=100;
-        if(Left_Out<=-60)Left_Out=-60;
+        if(Left_Out>=85)Left_Out=85;
+        if(Left_Out<=-30)Left_Out=-30;
 
-        if(Right_Out>=100)Right_Out=100;
-        if(Right_Out<=-60)Right_Out=-60;
+        if(Right_Out>=85)Right_Out=85;
+        if(Right_Out<=-30)Right_Out=-30;
 
 
         //电机调控
