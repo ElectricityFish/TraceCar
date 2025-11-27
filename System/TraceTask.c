@@ -13,17 +13,17 @@ void PID_SetSpeed(void)
 
     static uint8_t Count;
     Count++;
-    if(Count>=20)
+    if(Count>=50)
     {
-        Count=0;//每20ms调控一次
+        Count=0;//每50ms调控一次
         Previous_Error=Current_Error;
         Current_Error=Sensor_Get_WeightError();
         Error_Sum+=Current_Error;
 
-        //积分分离
+        
         if(fabs(Current_Error<9))
         {
-            Error_Sum+=Current_Error;
+          Error_Sum+=Current_Error;
         }else{
             Error_Sum=+Current_Error/2;
         }
@@ -40,11 +40,11 @@ void PID_SetSpeed(void)
 
 
         //输出限幅
-        if(Left_Out>=85)Left_Out=85;
-        if(Left_Out<=-30)Left_Out=-30;
+        if(Left_Out>=65)Left_Out=65;
+        if(Left_Out<=-50)Left_Out=-50;
 
-        if(Right_Out>=85)Right_Out=85;
-        if(Right_Out<=-30)Right_Out=-30;
+        if(Right_Out>=85)Right_Out=65;
+        if(Right_Out<=-50)Right_Out=-50;
 
 
         //电机调控

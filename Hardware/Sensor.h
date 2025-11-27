@@ -1,11 +1,6 @@
 #ifndef __SENSOR_H
 #define __SENSOR_H
 
-//宏定义传感器返回值
-#define Sensor_Left1 GPIO_ReadInputDataBit(GPIOB,GPIO_Pin_12)
-#define Sensor_Left2 GPIO_ReadInputDataBit(GPIOB,GPIO_Pin_13)
-#define Sensor_Right1 GPIO_ReadInputDataBit(GPIOB,GPIO_Pin_14)
-#define Sensor_Right2 GPIO_ReadInputDataBit(GPIOB,GPIO_Pin_15)
 
 //循迹逻辑
 int16_t Sensor_Get_WeightError(void);//获取加权偏移误差
