@@ -1,3 +1,7 @@
-Load "c:\\Users\\ASUS\\Desktop\\TraceCar\\Objects\\Project.axf" 
-Error: Flash Download failed  -  Target DLL has been cancelled
-Flash Load finished at 19:22:38
+*** Using Compiler 'V5.06 update 5 (build 528)', folder: 'E:\stm32\keil5\ARM\ARMCC\Bin'
+Build target 'Target 1'
+compiling Sensor.c...
+linking...
+Program Size: Code=15866 RO-data=3202 RW-data=48 ZI-data=2656  
+".\Objects\Project.axf" - 0 Error(s), 0 Warning(s).
+Build Time Elapsed:  00:00:01

@@ -11,7 +11,7 @@
 #include "TraceTask.h"
 
 uint8_t KeyNum,State;
-float kp=8.0,ki=0.0,kd=0.0;
+float kp=2.0,ki=0.0,kd=0.0;
 int8_t DirectOut=60;
 extern float Current_Error,Previous_Error,Error_Sum;
 
@@ -33,10 +33,8 @@ int main()
 		if(State==0)
 		{
 			LED_OFF();
-			Motor_SetPWM_Left1(0);
-			Motor_SetPWM_Left2(0);
-			Motor_SetPWM_Right1(0);
-			Motor_SetPWM_Right2(0);
+			Motor_SetPWM_Left(0);
+			Motor_SetPWM_Right(0);
 			OLED_Printf(0,0,OLED_8X16,"Debug                                    ");
 			Current_Error=0;
 			Previous_Error=0;

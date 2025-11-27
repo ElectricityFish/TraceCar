@@ -18,15 +18,20 @@ void PID_SetSpeed(void)
         Count=0;//每50ms调控一次
         Previous_Error=Current_Error;
         Current_Error=Sensor_Get_WeightError();
-        Error_Sum+=Current_Error;
-
-        
-        if(fabs(Current_Error<9))
+        if(Current_Error==-100)//车辆向右出线
         {
-          Error_Sum+=Current_Error;
-        }else{
-            Error_Sum=+Current_Error/2;
+          Motor_SetPWM_Left(-5);
+		      Motor_SetPWM_Right(60);
+          return;
         }
+        if(Current_Error==100)//车辆向左出线
+        {
+          Motor_SetPWM_Left(60);
+		      Motor_SetPWM_Right(-5);
+          return;
+        }
+
+        Error_Sum+=Current_Error;
 
         float Error_Init=ki*Error_Sum;
         //积分限幅
@@ -40,18 +45,16 @@ void PID_SetSpeed(void)
 
 
         //输出限幅
-        if(Left_Out>=65)Left_Out=65;
+        if(Left_Out>=100)Left_Out=100;
         if(Left_Out<=-50)Left_Out=-50;
 
-        if(Right_Out>=85)Right_Out=65;
+        if(Right_Out>=100)Right_Out=100;
         if(Right_Out<=-50)Right_Out=-50;
 
 
         //电机调控
-        Motor_SetPWM_Left1(Left_Out);
-		Motor_SetPWM_Left2(Left_Out);
-		Motor_SetPWM_Right1(Right_Out);
-		Motor_SetPWM_Right2(Right_Out);
+        Motor_SetPWM_Left(Left_Out);
+		    Motor_SetPWM_Right(Right_Out);
 
     }
 }
