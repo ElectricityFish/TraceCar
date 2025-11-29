@@ -12,7 +12,7 @@
 
 uint8_t KeyNum,State;
 float kp=2.5,ki=0.05,kd=1.00;//DirectOut==60时，kp,ki,kd,较合适的值为2.5,0.05,1.00
-int8_t DirectOut=60;
+int8_t DirectSpeed=50;
 extern float Current_Error,Previous_Error,Error_Sum;
 
 int main()
@@ -51,7 +51,7 @@ int main()
 		 * 
 		*********************************************/
 
-		OLED_Printf(0,16,OLED_8X16,"Direct:%3d",DirectOut);
+		OLED_Printf(0,16,OLED_8X16,"Direct:%3d",DirectSpeed);
 		OLED_Printf(0,32,OLED_8X16,"p=%.1f,i=%.2f",kp,ki);
 		OLED_Printf(0,48,OLED_8X16,"kd=%.1f",kd);
 		OLED_Update();
@@ -81,11 +81,11 @@ int main()
 					OLED_Printf(60,0,OLED_8X16,"kd     ");
 				}
 				int8_t change=RotateEncoder_Get();		
-				if(Menu_Indxe==1)DirectOut+=change;
+				if(Menu_Indxe==1)DirectSpeed+=change;
 				if(Menu_Indxe==2)kp+=(float)change*0.1;
 				if(Menu_Indxe==3)ki+=(float)change*0.01;
 				if(Menu_Indxe==4)kd+=(float)change*0.1;
-				OLED_Printf(0,16,OLED_8X16,"Direct:%3d",DirectOut);
+				OLED_Printf(0,16,OLED_8X16,"Direct:%3d",DirectSpeed);
 				OLED_Printf(0,32,OLED_8X16,"p=%.1f,i=%.2f",kp,ki);
 				OLED_Printf(0,48,OLED_8X16,"kd=%.1f",kd);
 				OLED_Update();
@@ -109,6 +109,8 @@ void TIM1_UP_IRQHandler(void)
 		{
 			LED_ON();
 			PID_SetSpeed();
+			PID_LeftMotorSpeed();
+			PID_RightMotorSpeed();
 		}
 		TIM_ClearITPendingBit(TIM1, TIM_IT_Update);
 	}
