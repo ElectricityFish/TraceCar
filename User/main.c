@@ -11,8 +11,8 @@
 #include "TraceTask.h"
 
 uint8_t KeyNum,State;
-float kp=2.0,ki=0.02,kd=0.10;//DirectOut==60时，kp,ki,kd,较合适的值为2.5,0.05,1.00
-int8_t DirectSpeed=50;
+float kp=4.0,ki=0.00,kd=2.00;
+int8_t DirectSpeed=10;
 extern float Current_Error,Previous_Error,Error_Sum;
 
 int main()

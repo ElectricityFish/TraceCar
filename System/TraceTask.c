@@ -9,7 +9,7 @@ extern float kp,ki,kd;
 float Current_Error,Previous_Error,Error_Sum;
 float PID_Out;
 
-float Speed_kp=1.0,Speed_ki=0.5,Speed_kd=0;
+float Speed_kp=1.2,Speed_ki=0.5,Speed_kd=0;
 
 float Left_Target, Left_Actual, Left_Out;			//目标值，实际值，输出值
 float Left_Error0, Left_Error1, Left_Error2;		//本次误差，上次误差，上上次误差
@@ -30,12 +30,12 @@ void PID_SetSpeed(void)
         if(Current_Error==-100)//车辆向右出线
         {
           Left_Target=0;
-          Right_Target=40;
+          Right_Target=30;
           return;
         }
         if(Current_Error==100)//车辆向左出线
         {
-          Left_Target=40;
+          Left_Target=30;
           Right_Target=0;
           return;
         }
@@ -44,8 +44,8 @@ void PID_SetSpeed(void)
 
         float Error_Init=ki*Error_Sum;
         //积分限幅
-        if(Error_Init>=40)Error_Init=40;
-        if(Error_Init<=-30)Error_Init=-30;
+        if(Error_Init>=30)Error_Init=30;
+        if(Error_Init<=-20)Error_Init=-20;
 
         PID_Out=kp*Current_Error+Error_Init+kd*(Current_Error-Previous_Error);
         //更改目标速度
@@ -59,7 +59,7 @@ void PID_SetSpeed(void)
         if(Left_Target<=-65)Left_Target=-65;
 
         if(Right_Target>=65)Right_Target=65;
-        if(Right_Target<=-65)Right_Target=-65;
+        if(Right_Target<=-10)Right_Target=-10;
     }
 }
 

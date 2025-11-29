@@ -45,9 +45,9 @@ int16_t Sensor_Get_WeightError(void)//获取加权偏移误差
 
    
     
-    //L_Mid为-2，L权重为-8，FL为-20，R_Mid为2，R权重为8，FR为20
+    //L_Mid为-2，L权重为-5，FL为-15，R_Mid为2，R权重为5，FR为15
     int16_t Error;
-    Error=(-2)*L_Mid+(-8)*L+(-20)*FL+2*R_Mid+8*R+20*FR;
+    Error=(-2)*L_Mid+(-5)*L+(-15)*FL+2*R_Mid+5*R+15*FR;
 
     if(Pre_Rescue==-1&&Error==0)//向右完全脱离
     {
