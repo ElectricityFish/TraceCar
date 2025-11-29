@@ -9,7 +9,7 @@ extern float kp,ki,kd;
 float Current_Error,Previous_Error,Error_Sum;
 float PID_Out;
 
-float Speed_kp=0.6,Speed_ki=0.3,Speed_kd=0.1;
+float Speed_kp=1.0,Speed_ki=0.5,Speed_kd=0;
 
 float Left_Target, Left_Actual, Left_Out;			//目标值，实际值，输出值
 float Left_Error0, Left_Error1, Left_Error2;		//本次误差，上次误差，上上次误差
@@ -66,10 +66,11 @@ void PID_SetSpeed(void)
 void PID_LeftMotorSpeed(void)
 {
 
-  static uint8_t Count;
-  Count++;
-  if(Count>=10)//每10ms进行一次速度调控
+  static uint8_t Count1;
+  Count1++;
+  if(Count1>=10)//每10ms进行一次速度调控
   {
+    Count1=0;
     Left_Actual=Encoder_Get_Left();
     Left_Error2 = Left_Error1;			//获取上上次误差
 		Left_Error1 = Left_Error0;			//获取上次误差
@@ -92,10 +93,11 @@ void PID_LeftMotorSpeed(void)
 void PID_RightMotorSpeed(void)
 {
 
-  static uint8_t Count;
-  Count++;
-  if(Count>=10)//每10ms进行一次速度调控
+  static uint8_t Count2;
+  Count2++;
+  if(Count2>=10)//每10ms进行一次速度调控
   {
+    Count2=0;
     Right_Actual=Encoder_Get_Right();
     Right_Error2 = Right_Error1;			//获取上上次误差
 		Right_Error1 = Right_Error0;			//获取上次误差

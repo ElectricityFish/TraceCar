@@ -7,7 +7,7 @@
 #define Sensor_Right GPIO_ReadInputDataBit(GPIOB,GPIO_Pin_15)
 
 #define Sensor_FarLeft GPIO_ReadInputDataBit(GPIOA,GPIO_Pin_8)
-#define Sensor_FarRight GPIO_ReadInputDataBit(GPIOA,GPIO_Pin_9)
+#define Sensor_FarRight GPIO_ReadInputDataBit(GPIOA,GPIO_Pin_3)
 
 void Sensor_Init(void)
 {
@@ -17,7 +17,7 @@ void Sensor_Init(void)
     GPIO_InitStruct.GPIO_Pin=GPIO_Pin_12|GPIO_Pin_13|GPIO_Pin_14|GPIO_Pin_15;
     GPIO_InitStruct.GPIO_Speed=GPIO_Speed_50MHz;
     GPIO_Init(GPIOB,&GPIO_InitStruct);
-    GPIO_InitStruct.GPIO_Pin=GPIO_Pin_8|GPIO_Pin_9;
+    GPIO_InitStruct.GPIO_Pin=GPIO_Pin_8|GPIO_Pin_3;
     GPIO_Init(GPIOA,&GPIO_InitStruct);
 }
 
