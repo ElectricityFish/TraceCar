@@ -11,7 +11,7 @@
 #include "TraceTask.h"
 
 uint8_t KeyNum,State;
-float kp=4.0,ki=0.00,kd=2.00;
+float kp=0.3,ki=0.00,kd=0.1;
 int8_t DirectSpeed=10;
 extern float Current_Error,Previous_Error,Error_Sum;
 
@@ -101,16 +101,28 @@ int main()
 
 void TIM1_UP_IRQHandler(void)
 {
+	static uint8_t Count1=0,Count2=0;
 	if (TIM_GetITStatus(TIM1, TIM_IT_Update) == SET)
 	{
+		
 		
 		Key_Tick();
 		if(State==1)
 		{
 			LED_ON();
-			PID_SetSpeed();
-			PID_LeftMotorSpeed();
-			PID_RightMotorSpeed();
+			Count1++;
+			if(Count1>=10)
+			{
+				PID_LeftMotorSpeed();
+				PID_RightMotorSpeed();
+				Count1=0;
+				Count2++;
+			}
+			if(Count2>=5)
+			{
+				PID_SetSpeed();
+				Count2=0;
+			}
 		}
 		TIM_ClearITPendingBit(TIM1, TIM_IT_Update);
 	}
