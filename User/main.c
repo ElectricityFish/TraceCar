@@ -9,6 +9,7 @@
 #include "Sensor.h"
 #include "RotateEncoder.h"
 #include "TraceTask.h"
+#include "Encoder.h"
 
 uint8_t KeyNum,State;
 float kp=0.3,ki=0.00,kd=0.1;
@@ -17,6 +18,7 @@ extern float Current_Error,Previous_Error,Error_Sum;
 
 int main()
 {
+	
 	Key_Init();
 	OLED_Init();
 	Motor_Init();
@@ -24,6 +26,7 @@ int main()
 	LED_Init();
 	RotateEncoder_Init();
 	Timer_Init();//一般定时器在最后初始化
+	Encoder_Init();
 	uint8_t Menu_Indxe=0;
 	
 	while(1)

@@ -9,7 +9,7 @@ extern float kp,ki,kd;
 float Current_Error,Previous_Error,Error_Sum;
 float PID_Out;
 
-float Speed_kp=1.2,Speed_ki=0.5,Speed_kd=0;
+float Speed_kp=1.7,Speed_ki=1.0,Speed_kd=0;
 
 float Left_Target, Left_Actual, Left_Out;			//目标值，实际值，输出值
 
@@ -72,10 +72,8 @@ void PID_SetSpeed(void)
 
 void PID_LeftMotorSpeed(void)
 {
-    static uint8_t Count1;
-    Count1++;
-    if(Count1 >= 10) {
-        Count1 = 0;
+  
+   
         
         Left_Actual = Encoder_Get_Left();
         float error = Left_Target - Left_Actual;
@@ -96,16 +94,14 @@ void PID_LeftMotorSpeed(void)
         if(Left_Out < -100) Left_Out = -100;
         
         Motor_SetPWM_Left(Left_Out);
-    }
+    
 }
 
 
 void PID_RightMotorSpeed(void)
 {
-    static uint8_t Count1;
-    Count1++;
-    if(Count1 >= 10) {
-        Count1 = 0;
+  
+  
         
         Right_Actual = Encoder_Get_Right();
         float error = Right_Target - Right_Actual;
@@ -126,7 +122,7 @@ void PID_RightMotorSpeed(void)
         if(Right_Out < -100) Right_Out = -100;
         
         Motor_SetPWM_Right(Right_Out);
-    }
+
 }
 
 

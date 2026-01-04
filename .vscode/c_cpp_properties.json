@@ -3,11 +3,11 @@
         {
             "name": "Target 1",
             "includePath": [
-                "c:\\Users\\ASUS\\Desktop\\TraceCar\\Start",
-                "c:\\Users\\ASUS\\Desktop\\TraceCar\\Library",
-                "c:\\Users\\ASUS\\Desktop\\TraceCar\\User",
-                "c:\\Users\\ASUS\\Desktop\\TraceCar\\System",
-                "c:\\Users\\ASUS\\Desktop\\TraceCar\\Hardware",
+                "e:\\stm32\\keil5\\stm32project\\practice\\TraceCarAndBackups\\TraceCar\\Start",
+                "e:\\stm32\\keil5\\stm32project\\practice\\TraceCarAndBackups\\TraceCar\\Library",
+                "e:\\stm32\\keil5\\stm32project\\practice\\TraceCarAndBackups\\TraceCar\\User",
+                "e:\\stm32\\keil5\\stm32project\\practice\\TraceCarAndBackups\\TraceCar\\System",
+                "e:\\stm32\\keil5\\stm32project\\practice\\TraceCarAndBackups\\TraceCar\\Hardware",
                 "E:\\stm32\\keil5\\ARM\\ARMCC\\include",
                 "E:\\stm32\\keil5\\ARM\\ARMCC\\include\\rw"
             ],
