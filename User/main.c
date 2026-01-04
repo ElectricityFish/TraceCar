@@ -9,16 +9,14 @@
 #include "Sensor.h"
 #include "RotateEncoder.h"
 #include "TraceTask.h"
-#include "Encoder.h"
 
 uint8_t KeyNum,State;
-float kp=0.3,ki=0.00,kd=0.1;
-int8_t DirectSpeed=10;
+float kp=2.5,ki=0.05,kd=1.00;//DirectOut==60时，kp,ki,kd,较合适的值为2.5,0.05,1.00
+int8_t DirectOut=60;
 extern float Current_Error,Previous_Error,Error_Sum;
 
 int main()
 {
-	
 	Key_Init();
 	OLED_Init();
 	Motor_Init();
@@ -26,7 +24,6 @@ int main()
 	LED_Init();
 	RotateEncoder_Init();
 	Timer_Init();//一般定时器在最后初始化
-	Encoder_Init();
 	uint8_t Menu_Indxe=0;
 	
 	while(1)
@@ -54,7 +51,7 @@ int main()
 		 * 
 		*********************************************/
 
-		OLED_Printf(0,16,OLED_8X16,"Direct:%3d",DirectSpeed);
+		OLED_Printf(0,16,OLED_8X16,"Direct:%3d",DirectOut);
 		OLED_Printf(0,32,OLED_8X16,"p=%.1f,i=%.2f",kp,ki);
 		OLED_Printf(0,48,OLED_8X16,"kd=%.1f",kd);
 		OLED_Update();
@@ -84,11 +81,11 @@ int main()
 					OLED_Printf(60,0,OLED_8X16,"kd     ");
 				}
 				int8_t change=RotateEncoder_Get();		
-				if(Menu_Indxe==1)DirectSpeed+=change;
+				if(Menu_Indxe==1)DirectOut+=change;
 				if(Menu_Indxe==2)kp+=(float)change*0.1;
 				if(Menu_Indxe==3)ki+=(float)change*0.01;
 				if(Menu_Indxe==4)kd+=(float)change*0.1;
-				OLED_Printf(0,16,OLED_8X16,"Direct:%3d",DirectSpeed);
+				OLED_Printf(0,16,OLED_8X16,"Direct:%3d",DirectOut);
 				OLED_Printf(0,32,OLED_8X16,"p=%.1f,i=%.2f",kp,ki);
 				OLED_Printf(0,48,OLED_8X16,"kd=%.1f",kd);
 				OLED_Update();
@@ -104,28 +101,14 @@ int main()
 
 void TIM1_UP_IRQHandler(void)
 {
-	static uint8_t Count1=0,Count2=0;
 	if (TIM_GetITStatus(TIM1, TIM_IT_Update) == SET)
 	{
-		
 		
 		Key_Tick();
 		if(State==1)
 		{
 			LED_ON();
-			Count1++;
-			if(Count1>=10)
-			{
-				PID_LeftMotorSpeed();
-				PID_RightMotorSpeed();
-				Count1=0;
-				Count2++;
-			}
-			if(Count2>=5)
-			{
-				PID_SetSpeed();
-				Count2=0;
-			}
+			PID_SetSpeed();
 		}
 		TIM_ClearITPendingBit(TIM1, TIM_IT_Update);
 	}
